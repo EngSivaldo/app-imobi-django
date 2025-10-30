@@ -9,6 +9,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # 🌟 NOVAS ROTAS DE AUTENTICAÇÃO DO DJANGO
+    # Mapeia as views de login, logout, password change, etc.
+    path('', include('django.contrib.auth.urls')),
+    
     path('', include('imoveis.urls')), 
 ]
 

@@ -127,7 +127,18 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media' 
 # Cria uma pasta 'media' na raiz do projeto para guardar os uploads
 
+
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# 🌟 OBRIGATÓRIO: URL para onde o utilizador será redirecionado se não estiver logado.
+LOGIN_URL = '/login/' 
+
+# NOTA: O Django já vem com a estrutura básica de autenticação (login, logout, users). 
+# '/login/' será a URL que teremos que criar ou usar do sistema de autenticação do Django.

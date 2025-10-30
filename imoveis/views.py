@@ -1,5 +1,5 @@
 # imoveis/views.py
-
+from django.contrib.auth.mixins import LoginRequiredMixin # 🌟 NOVO IMPORT
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView
@@ -51,7 +51,7 @@ class ImovelDetailView(DetailView):
 # ==============================================================================
 # VIEW: Cadastro de Novo Imóvel (CreateView) - CBV
 # ==============================================================================
-class ImovelCreateView(CreateView):
+class ImovelCreateView(LoginRequiredMixin,CreateView):
     model = Imovel # 🌟 Propriedade obrigatória
     form_class = ImovelForm # 🌟 Propriedade obrigatória
     template_name = 'imoveis/cadastro_imovel.html' 
@@ -84,7 +84,7 @@ class ImovelCreateView(CreateView):
 # ==============================================================================
 # VIEW: Edição de Imóvel (UpdateView) - CBV
 # ==============================================================================
-class ImovelUpdateView(UpdateView):
+class ImovelUpdateView(LoginRequiredMixin,UpdateView):
     model = Imovel # 🌟 CORRIGIDO: Propriedade obrigatória
     form_class = ImovelForm # 🌟 CORRIGIDO: Propriedade obrigatória
     template_name = 'imoveis/cadastro_imovel.html' # 🌟 CORRIGIDO: Propriedade obrigatória
