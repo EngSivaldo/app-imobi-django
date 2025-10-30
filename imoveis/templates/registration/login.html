@@ -1,43 +1,72 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Acesso Restrito | Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+{% extends "base.html" %}
+{% load widget_tweaks %}
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card p-4 shadow-lg" style="width: 100%; max-width: 400px;">
-        <h2 class="card-title text-center text-primary mb-4">🔑 Login de Acesso</h2>
+{% block title %}Acesso Restrito | Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center pt-5">
+    <div class="col-md-6 col-lg-5 col-xl-4">
         
-        {% if form.errors %}
-            <p class="alert alert-danger">Nome de utilizador ou senha inválidos. Tente novamente.</p>
-        {% endif %}
-
-        <form method="post">
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label for="{{ form.username.id_for_label }}" class="form-label">Nome de Utilizador</label>
-                {{ form.username }}
-            </div>
-            <div class="mb-3">
-                <label for="{{ form.password.id_for_label }}" class="form-label">Senha</label>
-                {{ form.password }}
-            </div>
+        <div class="card p-4 p-md-5 shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
             
-            <button type="submit" class="btn btn-primary w-100 mb-3">Entrar</button>
+            <h2 class="card-title text-center text-primary fw-bolder mb-4">
+                <i class="fas fa-lock me-2"></i> Acesso à Área Restrita
+            </h2>
+            <p class="text-center text-muted mb-4">Insira suas credenciais para continuar.</p>
 
-            <input type="hidden" name="next" value="{{ next }}" />
+            {% if form.errors %}
+                <div class="alert alert-danger mb-4 small" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i> 
+                    Nome de utilizador ou senha inválidos. Por favor, tente novamente.
+                </div>
+            {% endif %}
             
-            <p class="text-center small">
-                <a href="{% url 'admin:index' %}">Ir para Admin</a>
-            </p>
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <div class="alert alert-warning mb-4 small" role="alert">
+                        A sua conta não tem acesso a esta página.
+                    </div>
+                {% endif %}
+            {% endif %}
+            
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
 
-        </form>
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Nome de Utilizador</label>
+                    {% render_field form.username class="form-control form-control-lg"|add_error_class:"is-invalid" placeholder="Seu nome de utilizador" %}
+                    
+                    {% for error in form.username.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">Senha</label>
+                    {% render_field form.password class="form-control form-control-lg"|add_error_class:"is-invalid" placeholder="••••••••" %}
+                    
+                    {% for error in form.password.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3 shadow-sm">
+                    <i class="fas fa-sign-in-alt me-2"></i> Entrar
+                </button>
+
+                <input type="hidden" name="next" value="{{ next }}" />
+                
+                <div class="text-center small mt-3">
+                    <p class="text-muted mb-1">
+                        Esqueceu sua senha? <a href="#" class="text-decoration-none text-info">Clique aqui.</a>
+                    </p>
+                    <p>
+                        Acessar Painel <a href="{% url 'admin:index' %}" class="text-decoration-none text-secondary">Admin</a>
+                    </p>
+                </div>
+
+            </form>
+        </div>
     </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

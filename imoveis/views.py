@@ -1,5 +1,6 @@
 # imoveis/views.py
 from django.contrib.auth.mixins import LoginRequiredMixin # 🌟 NOVO IMPORT
+from django.contrib import messages # 🌟 NOVO IMPORT
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView
@@ -76,6 +77,9 @@ class ImovelCreateView(LoginRequiredMixin,CreateView):
             self.object = form.save()
             galeria_formset.instance = self.object
             galeria_formset.save()
+            # 🌟 MENSAGEM DE SUCESSO (Super Dev style)
+            messages.success(self.request, f'Imóvel "{self.object.titulo}" cadastrado com sucesso e está disponível para venda!')
+            
             return super().form_valid(form)
         else:
             return self.render_to_response(self.get_context_data(form=form))
@@ -107,6 +111,8 @@ class ImovelUpdateView(LoginRequiredMixin,UpdateView):
             response = super().form_valid(form)
             galeria_formset.instance = self.object
             galeria_formset.save()
+            # 🌟 MENSAGEM DE SUCESSO
+            messages.info(self.request, f'Imóvel "{self.object.titulo}" atualizado com sucesso!')
             return response
         else:
             return self.render_to_response(self.get_context_data(form=form))

@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 🌟 A nossa nova aplicação 'imoveis' deve ser adicionada aqui
     'imoveis', 
+    'widget_tweaks', # 🌟 NOVO
+    
 ]
 
 MIDDLEWARE = [

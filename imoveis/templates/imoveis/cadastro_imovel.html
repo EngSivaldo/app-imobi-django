@@ -1,74 +1,191 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Cadastrar Novo Imóvel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+{% extends "base.html" %}
+{% load widget_tweaks %}
 
-    <div class="container mt-5">
-        <div class="container mt-5">
-            <h1 class="mb-4 text-primary">
+{% block title %}
+    {% if form.instance.pk %}
+        Editar: {{ form.instance.titulo }}
+    {% else %}
+        Cadastrar Novo Imóvel
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="bg-white p-4 rounded-4 shadow-lg border border-light-subtle">
+            <h1 class="mb-4 text-primary fw-bold d-flex align-items-center gap-2 border-bottom pb-3">
+                <i class="fas fa-home me-2"></i>
                 {% if form.instance.pk %}
-                    Editar: {{ form.instance.titulo }}
+                    Editar Imóvel: <span class="text-truncate">{{ form.instance.titulo }}</span>
                 {% else %}
                     Cadastrar Novo Imóvel
                 {% endif %}
             </h1>
-            <hr>
-            
-            </div>
-        <hr>
-        
-        <form method="post" enctype="multipart/form-data">
-            
-            {% csrf_token %}
-            
-            {{ form.as_p }}
 
-            <h3 class="mt-5 mb-3 text-secondary">Galeria de Fotos (Adicionar/Editar)</h3>
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
 
-            <div class="row border p-3 rounded">
-                <div class="col-12">
-                    {{ galeria_formset.management_form }} 
+                <div class="card mb-5 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="mb-4 text-secondary">
+                            <i class="fas fa-file-alt me-2 text-primary"></i> Informações Essenciais
+                        </h4>
+                        
+                        <div class="row g-4">
 
-                    {% for foto_form in galeria_formset %}
-                        <div class="card mb-3 p-3 bg-light">
-                            <div class="row g-3">
-                                
-                                <div class="col-md-6">
-                                    <label class="form-label">{{ foto_form.imagem.label }}</label>
-                                    {{ foto_form.imagem }}
-                                    {% if foto_form.instance.imagem %}
-                                        <p class="mt-2">
-                                            Foto Atual: <a href="{{ foto_form.instance.imagem.url }}" target="_blank">Ver</a>
-                                        </p>
-                                        <div class="form-check form-check-inline">
-                                            {{ foto_form.DELETE }}
-                                            <label class="form-check-label text-danger" for="{{ foto_form.DELETE.id_for_label }}">Deletar?</label>
-                                        </div>
-                                    {% endif %}
-                                    {% if foto_form.imagem.errors %}<div class="text-danger small">{{ foto_form.imagem.errors }}</div>{% endif %}
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label class="form-label">{{ foto_form.descricao.label }}</label>
-                                    {{ foto_form.descricao }}
-                                    {% if foto_form.descricao.errors %}<div class="text-danger small">{{ foto_form.descricao.errors }}</div>{% endif %}
-                                </div>
+                            <div class="col-12">
+                                <label for="{{ form.titulo.id_for_label }}" class="form-label fw-semibold">{{ form.titulo.label }}</label>
+                                {% render_field form.titulo class="form-control form-control-lg"|add_error_class:"is-invalid" placeholder="Ex: Apartamento T2 com vista para o mar" %}
+                                {% for error in form.titulo.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
 
-                                {{ foto_form.id }}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{ form.preco.label }}</label>
+                                {% render_field form.preco class="form-control form-control-lg"|add_error_class:"is-invalid" placeholder="99999.00" %}
+                                {% for error in form.preco.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">{{ form.tipo.label }}</label>
+                                {% render_field form.tipo class="form-select form-select-lg"|add_error_class:"is-invalid" %}
+                                {% for error in form.tipo.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">{{ form.endereco.label }}</label>
+                                {% render_field form.endereco class="form-control form-control-lg"|add_error_class:"is-invalid" placeholder="Rua das Flores, 123, Lisboa" %}
+                                {% for error in form.endereco.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">{{ form.descricao.label }}</label>
+                                {% render_field form.descricao class="form-control form-control-lg"|add_error_class:"is-invalid" rows="5" placeholder="Descreva o imóvel em detalhes..." %}
+                                {% for error in form.descricao.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
                             </div>
                         </div>
-                    {% endfor %}
+                    </div>
                 </div>
-            </div>
-                        
-            <button type="submit" class="btn btn-success btn-lg mt-3">Salvar Imóvel</button>
-            <a href="{% url 'lista_imoveis' %}" class="btn btn-secondary btn-lg mt-3">Cancelar</a>
-        </form>
-    </div>
+                
+                <div class="card mb-5 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="mb-4 text-secondary">
+                            <i class="fas fa-camera me-2 text-primary"></i> Imagem Principal e Status
+                        </h4>
 
-</body>
-</html>
+                        <div class="row g-4 align-items-end">
+                            
+                            <div class="col-md-9">
+                                <label class="form-label fw-semibold">{{ form.imagem_principal.label }}</label>
+                                {% render_field form.imagem_principal class="form-control"|add_error_class:"is-invalid" %}
+                                
+                                {% if form.instance.imagem_principal %}
+                                    <p class="mt-2 mb-0 small text-muted">Foto atual:</p>
+                                    <a href="{{ form.instance.imagem_principal.url }}" target="_blank" class="text-decoration-none text-primary fw-semibold d-block">
+                                        <img src="{{ form.instance.imagem_principal.url }}" alt="Foto Principal" style="max-width: 150px; height: auto;" class="img-thumbnail mt-2">
+                                    </a>
+                                {% endif %}
+                                {% for error in form.imagem_principal.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check form-switch p-0">
+                                    <label class="form-label fw-semibold d-block">{{ form.esta_a_venda.label }}</label>
+                                    <div class="d-flex align-items-center mt-2">
+                                        {% render_field form.esta_a_venda class="form-check-input fs-4" %}
+                                        <span class="ms-3 text-muted">
+                                            {% if form.instance.esta_a_venda.value %}
+                                                <i class="fas fa-check-circle text-success me-1"></i> Ativo
+                                            {% else %}
+                                                <i class="fas fa-times-circle text-danger me-1"></i> Desativado
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    {% for error in form.esta_a_venda.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-5">
+                    <div class="card-body">
+                        <h4 class="mb-4 text-secondary">
+                            <i class="fas fa-images me-2 text-primary"></i> Galeria de Fotos (Adicionar/Editar)
+                        </h4>
+                        
+                        {{ galeria_formset.management_form }}
+                        
+                        <div id="galeria-formset-container">
+                            {% for foto_form in galeria_formset %}
+                                <div class="card mb-3 p-3 border-start border-4 border-primary bg-light rounded-3 shadow-sm">
+                                    <div class="row g-3 align-items-center">
+                                        
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ foto_form.imagem.label }}</label>
+                                            {% render_field foto_form.imagem class="form-control"|add_error_class:"is-invalid" %}
+                                            
+                                            {% if foto_form.instance.imagem %}
+                                                <div class="d-flex align-items-center justify-content-between mt-2">
+                                                    <div>
+                                                        <strong>Foto atual:</strong>
+                                                        <a href="{{ foto_form.instance.imagem.url }}" target="_blank" class="text-primary text-decoration-none ms-2">
+                                                            Ver <i class="fas fa-external-link-alt ms-1"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        {{ foto_form.DELETE }}
+                                                        <label class="form-check-label text-danger ms-1 fw-semibold">Deletar?</label>
+                                                    </div>
+                                                </div>
+                                                <img src="{{ foto_form.instance.imagem.url }}" alt="Foto Galeria" style="max-width: 100px; max-height: 100px; object-fit: cover;" class="img-thumbnail mt-2">
+                                            {% endif %}
+
+                                            {% for error in foto_form.imagem.errors %}
+                                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ foto_form.descricao.label }}</label>
+                                            {% render_field foto_form.descricao class="form-control"|add_error_class:"is-invalid" placeholder="Uma breve descrição da foto (opcional)" %}
+                                            {% for error in foto_form.descricao.errors %}
+                                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        
+                                        {{ foto_form.id }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 pt-3">
+                    <button type="submit" class="btn btn-success btn-lg px-5 shadow-lg">
+                        <i class="fas fa-save me-2"></i> Salvar Imóvel
+                    </button>
+                    <a href="{% url 'lista_imoveis' %}" class="btn btn-outline-secondary btn-lg px-5">
+                        <i class="fas fa-times-circle me-2"></i> Cancelar
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
